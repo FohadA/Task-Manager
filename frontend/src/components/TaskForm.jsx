@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { inputClass, selectClass, textareaClass, selectArrow } from '../ui/controlStyles';
+import { Button } from '../ui/Button';
+import { FieldError } from '../ui/FieldError';
+import { FieldHint } from '../ui/FieldHint';
+import { FieldLabel } from '../ui/FieldLabel';
 
-const valoresVacios = {
+const emptyValues = {
   titulo: '',
   descripcion: '',
   estado: 'pendiente',
@@ -11,105 +16,129 @@ const valoresVacios = {
 };
 
 const TaskForm = ({ initialData, projects, onSubmit, onCancel, loading }) => {
-  const esEdicion = !!initialData;
+  const isEditing = Boolean(initialData);
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({ defaultValues: initialData || valoresVacios });
+  } = useForm({ defaultValues: initialData || emptyValues });
 
   useEffect(() => {
-    reset(initialData || valoresVacios);
+    reset(initialData || emptyValues);
   }, [initialData, reset]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4 bg-white p-6 rounded-lg shadow">
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Título</label>
-        <input
-          type="text"
-          {...register('titulo', {
-            required: 'El título es requerido',
-            minLength: { value: 2, message: 'Mínimo 2 caracteres' },
-          })}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            errors.titulo ? 'border-red-500' : 'border-slate-300'
-          }`}
-        />
-        {errors.titulo && <p className="text-sm text-red-600 mt-1">{errors.titulo.message}</p>}
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      className="rounded-card border border-line bg-surface shadow-soft"
+    >
+      <div className="border-b border-line-soft px-5 py-3.5">
+        <h2 className="text-[15px] font-semibold text-ink">
+          {isEditing ? 'Editar tarea' : 'Nueva tarea'}
+        </h2>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Descripción</label>
-        <textarea
-          {...register('descripcion')}
-          rows={3}
-          className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Proyecto</label>
-        <select
-          {...register('proyecto', { required: 'Selecciona un proyecto' })}
-          disabled={esEdicion}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:text-slate-500 ${
-            errors.proyecto ? 'border-red-500' : 'border-slate-300'
-          }`}
-        >
-          <option value="">Selecciona un proyecto</option>
-          {projects.map((p) => (
-            <option key={p._id} value={p._id}>{p.nombre}</option>
-          ))}
-        </select>
-        {errors.proyecto && <p className="text-sm text-red-600 mt-1">{errors.proyecto.message}</p>}
-        {esEdicion && <p className="text-xs text-slate-400 mt-1">El proyecto no se puede cambiar una vez creada la tarea.</p>}
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
+      <div className="flex flex-col gap-4 px-5 py-5">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Estado</label>
-          <select {...register('estado')} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="pendiente">Pendiente</option>
-            <option value="en_progreso">En progreso</option>
-            <option value="completada">Completada</option>
-          </select>
+          <FieldLabel htmlFor="task-title">Título</FieldLabel>
+          <input
+            id="task-title"
+            type="text"
+            autoFocus
+            aria-invalid={errors.titulo ? 'true' : 'false'}
+            {...register('titulo', {
+              required: 'El título es requerido',
+              minLength: { value: 2, message: 'Mínimo 2 caracteres' },
+            })}
+            className={inputClass(errors.titulo)}
+          />
+          <FieldError>{errors.titulo?.message}</FieldError>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Prioridad</label>
-          <select {...register('prioridad')} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="baja">Baja</option>
-            <option value="media">Media</option>
-            <option value="alta">Alta</option>
+          <FieldLabel htmlFor="task-description">Descripción</FieldLabel>
+          <textarea
+            id="task-description"
+            rows={3}
+            {...register('descripcion')}
+            className={textareaClass(false)}
+          />
+        </div>
+
+        <div>
+          <FieldLabel htmlFor="task-project">Proyecto</FieldLabel>
+          <select
+            id="task-project"
+            disabled={isEditing}
+            aria-invalid={errors.proyecto ? 'true' : 'false'}
+            style={selectArrow}
+            {...register('proyecto', { required: 'Selecciona un proyecto' })}
+            className={selectClass(errors.proyecto)}
+          >
+            <option value="">Selecciona un proyecto</option>
+            {projects.map((project) => (
+              <option key={project._id} value={project._id}>
+                {project.nombre}
+              </option>
+            ))}
           </select>
+          <FieldError>{errors.proyecto?.message}</FieldError>
+          {isEditing && <FieldHint>El proyecto no se puede cambiar una vez creada la tarea.</FieldHint>}
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div>
+            <FieldLabel htmlFor="task-status">Estado</FieldLabel>
+            <select
+              id="task-status"
+              style={selectArrow}
+              {...register('estado')}
+              className={selectClass(false)}
+            >
+              <option value="pendiente">Pendiente</option>
+              <option value="en_progreso">En progreso</option>
+              <option value="completada">Completada</option>
+            </select>
+          </div>
+
+          <div>
+            <FieldLabel htmlFor="task-priority">Prioridad</FieldLabel>
+            <select
+              id="task-priority"
+              style={selectArrow}
+              {...register('prioridad')}
+              className={selectClass(false)}
+            >
+              <option value="baja">Baja</option>
+              <option value="media">Media</option>
+              <option value="alta">Alta</option>
+            </select>
+          </div>
+
+          <div>
+            <FieldLabel htmlFor="task-due-date">Vencimiento</FieldLabel>
+            <input
+              id="task-due-date"
+              type="date"
+              {...register('fechaVencimiento')}
+              className={inputClass(false)}
+            />
+          </div>
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Fecha de vencimiento</label>
-        <input
-          type="date"
-          {...register('fechaVencimiento')}
-          className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      <div className="flex gap-3 justify-end">
+      <div className="flex justify-end gap-2 border-t border-line-soft px-5 py-3.5">
         {onCancel && (
-          <button type="button" onClick={onCancel} className="px-4 py-2 rounded-md text-slate-600 hover:bg-slate-100">
+          <Button type="button" variant="secondary" onClick={onCancel}>
             Cancelar
-          </button>
+          </Button>
         )}
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium"
-        >
-          {loading ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Crear tarea'}
-        </button>
+        <Button type="submit" disabled={loading} loading={loading}>
+          {loading ? 'Guardando' : isEditing ? 'Guardar cambios' : 'Crear tarea'}
+        </Button>
       </div>
     </form>
   );

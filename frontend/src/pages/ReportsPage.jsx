@@ -1,23 +1,30 @@
 import { useState, useEffect } from 'react';
-import {
-  BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line,
-} from 'recharts';
 import { getReports } from '../api/reports';
+import { ProductivityLineChart } from '../components/ProductivityLineChart';
+import { StatusBarChart } from '../components/StatusBarChart';
+import { TopPendingList } from '../components/TopPendingList';
+import { EmptyState } from '../ui/EmptyState';
+import { ErrorAlert } from '../ui/ErrorAlert';
+import { Page } from '../ui/Page';
+import { PageHeader } from '../ui/PageHeader';
+import { Panel } from '../ui/Panel';
+import { PanelHeader } from '../ui/PanelHeader';
+import { Spinner } from '../ui/Spinner';
+import { StatCard } from '../ui/StatCard';
 
-const ESTADO_LABELS = {
+const STATUS_LABELS = {
   pendiente: 'Pendiente',
   en_progreso: 'En progreso',
   completada: 'Completada',
 };
 
-const ESTADO_COLORS = {
-  pendiente: '#f59e0b',
-  en_progreso: '#3b82f6',
-  completada: '#10b981',
+const STATUS_COLORS = {
+  pendiente: '#3e6ba8',
+  en_progreso: '#b4690e',
+  completada: '#0d7a55',
 };
 
-const InitialData = {
+const initialData = {
   summary: { totalProyectos: 0, totalTareas: 0, tareasCompletadas: 0, porcentajeCompletadas: 0 },
   tasksByStatus: [
     { estado: 'pendiente', count: 0 },
@@ -29,7 +36,7 @@ const InitialData = {
 };
 
 const Reports = () => {
-  const [data, setData] = useState(InitialData);
+  const [data, setData] = useState(initialData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -51,100 +58,71 @@ const Reports = () => {
 
   const { summary, tasksByStatus, topPendingProjects, productivity } = data;
 
-  const chartTasksByStatus = tasksByStatus.map((item) => ({
-    estado: ESTADO_LABELS[item.estado] || item.estado,
+  const statusChartData = tasksByStatus.map((item) => ({
+    label: STATUS_LABELS[item.estado] || item.estado,
     count: item.count,
-    fill: ESTADO_COLORS[item.estado],
+    fill: STATUS_COLORS[item.estado],
   }));
 
+  const noTasks = statusChartData.every((item) => item.count === 0);
+
   return (
-    <div className={`max-w-5xl mx-auto px-4 py-8 space-y-8 transition-opacity ${loading ? 'opacity-60' : 'opacity-100'}`}>
-      <div className="flex items-center gap-3">
-        <h1 className="text-2xl font-bold text-slate-800">Reportes</h1>
-        {loading && <span className="text-sm text-slate-400">Actualizando...</span>}
-      </div>
+    <Page>
+      <PageHeader
+        title="Reportes"
+        summary={loading ? 'Actualizando' : 'Datos de todos los proyectos'}
+      />
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">{error}</p>
+        <div className="mb-4">
+          <ErrorAlert>{error}</ErrorAlert>
+        </div>
       )}
 
-      {/* Resumen general */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow">
-          <p className="text-sm text-slate-500">Total proyectos</p>
-          <p className="text-2xl font-bold text-slate-800">{summary.totalProyectos}</p>
+      <div className={`flex flex-col gap-4 transition-opacity ${loading ? 'opacity-60' : ''}`}>
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <StatCard label="Proyectos" value={summary.totalProyectos} />
+          <StatCard label="Tareas" value={summary.totalTareas} />
+          <StatCard label="Completadas" value={summary.tareasCompletadas} />
+          <StatCard
+            label="Avance"
+            value={`${summary.porcentajeCompletadas}%`}
+            meter={summary.porcentajeCompletadas}
+          />
         </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <p className="text-sm text-slate-500">Total tareas</p>
-          <p className="text-2xl font-bold text-slate-800">{summary.totalTareas}</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <p className="text-sm text-slate-500">Tareas completadas</p>
-          <p className="text-2xl font-bold text-slate-800">{summary.tareasCompletadas}</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <p className="text-sm text-slate-500">% completadas</p>
-          <p className="text-2xl font-bold text-green-600">{summary.porcentajeCompletadas}%</p>
-        </div>
-      </div>
 
-      {/* Tareas por estado */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-lg font-semibold text-slate-800 mb-4">Tareas por estado</h2>
-        {!loading && chartTasksByStatus.every((c) => c.count === 0) ? (
-          <p className="text-slate-500 text-sm">No hay tareas todavía.</p>
-        ) : (
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={chartTasksByStatus}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="estado" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar dataKey="count" name="Tareas" radius={[4, 4, 0, 0]}>
-                {chartTasksByStatus.map((entry, index) => (
-                  <Cell key={index} fill={entry.fill} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-      </div>
+        <Panel>
+          <PanelHeader title="Tareas por estado" extra={loading ? <Spinner /> : null} />
+          <div className="px-4 pt-5 pb-3">
+            {!loading && noTasks ? (
+              <EmptyState>No hay tareas registradas.</EmptyState>
+            ) : (
+              <StatusBarChart data={statusChartData} />
+            )}
+          </div>
+        </Panel>
 
-      {/* Top 5 proyectos con más pendientes */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-lg font-semibold text-slate-800 mb-4">Proyectos con más tareas pendientes</h2>
-        {!loading && topPendingProjects.length === 0 ? (
-          <p className="text-slate-500 text-sm">No hay tareas pendientes.</p>
-        ) : (
-          <ol className="space-y-2">
-            {topPendingProjects.map((p, i) => (
-              <li key={p.proyectoId} className="flex items-center justify-between text-sm">
-                <span className="text-slate-700">{i + 1}. {p.proyectoNombre}</span>
-                <span className="font-semibold text-amber-600">{p.pendingCount} pendientes</span>
-              </li>
-            ))}
-          </ol>
-        )}
-      </div>
+        <Panel>
+          <PanelHeader title="Proyectos con más tareas pendientes" />
+          {!loading && topPendingProjects.length === 0 ? (
+            <EmptyState>No hay tareas pendientes.</EmptyState>
+          ) : (
+            <TopPendingList projects={topPendingProjects} />
+          )}
+        </Panel>
 
-      {/* Productividad por fecha */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-lg font-semibold text-slate-800 mb-4">Productividad (últimos 30 días)</h2>
-        {!loading && productivity.length === 0 ? (
-          <p className="text-slate-500 text-sm">Sin tareas completadas en este período.</p>
-        ) : (
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={productivity}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="fecha" tick={{ fontSize: 12 }} />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Line type="monotone" dataKey="completedCount" name="Completadas" stroke="#10b981" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
+        <Panel>
+          <PanelHeader title="Tareas completadas por día (últimos 30 días)" />
+          <div className="px-4 pt-5 pb-3">
+            {!loading && productivity.length === 0 ? (
+              <EmptyState>Sin tareas completadas en este período.</EmptyState>
+            ) : (
+              <ProductivityLineChart data={productivity} />
+            )}
+          </div>
+        </Panel>
       </div>
-    </div>
+    </Page>
   );
 };
 

@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { inputClass, textareaClass } from '../ui/controlStyles';
+import { Button } from '../ui/Button';
+import { FieldError } from '../ui/FieldError';
+import { FieldLabel } from '../ui/FieldLabel';
 
-const valoresVacios = { nombre: '', descripcion: '', fechaLimite: '' };
+/* Las claves son los campos que espera la API, por eso van en español. */
+const emptyValues = { nombre: '', descripcion: '', fechaLimite: '' };
 
 const ProjectForm = ({ initialData, onSubmit, onCancel, loading }) => {
   const {
@@ -9,60 +14,73 @@ const ProjectForm = ({ initialData, onSubmit, onCancel, loading }) => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({ defaultValues: initialData || valoresVacios });
-  
+  } = useForm({ defaultValues: initialData || emptyValues });
+
   useEffect(() => {
-    reset(initialData || valoresVacios);
+    reset(initialData || emptyValues);
   }, [initialData, reset]);
 
+  const isEditing = Boolean(initialData);
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4 bg-white p-6 rounded-lg shadow">
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
-        <input
-          type="text"
-          {...register('nombre', {
-            required: 'El nombre es requerido',
-            minLength: { value: 2, message: 'Mínimo 2 caracteres' },
-          })}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            errors.nombre ? 'border-red-500' : 'border-slate-300'
-          }`}
-        />
-        {errors.nombre && <p className="text-sm text-red-600 mt-1">{errors.nombre.message}</p>}
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      className="rounded-card border border-line bg-surface shadow-soft"
+    >
+      <div className="border-b border-line-soft px-5 py-3.5">
+        <h2 className="text-[15px] font-semibold text-ink">
+          {isEditing ? 'Editar proyecto' : 'Nuevo proyecto'}
+        </h2>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Descripción</label>
-        <textarea
-          {...register('descripcion')}
-          rows={3}
-          className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      <div className="flex flex-col gap-4 px-5 py-5">
+        <div>
+          <FieldLabel htmlFor="project-name">Nombre</FieldLabel>
+          <input
+            id="project-name"
+            type="text"
+            autoFocus
+            aria-invalid={errors.nombre ? 'true' : 'false'}
+            {...register('nombre', {
+              required: 'El nombre es requerido',
+              minLength: { value: 2, message: 'Mínimo 2 caracteres' },
+            })}
+            className={inputClass(errors.nombre)}
+          />
+          <FieldError>{errors.nombre?.message}</FieldError>
+        </div>
+
+        <div>
+          <FieldLabel htmlFor="project-description">Descripción</FieldLabel>
+          <textarea
+            id="project-description"
+            rows={3}
+            {...register('descripcion')}
+            className={textareaClass(false)}
+          />
+        </div>
+
+        <div className="max-w-55">
+          <FieldLabel htmlFor="project-due-date">Fecha límite</FieldLabel>
+          <input
+            id="project-due-date"
+            type="date"
+            {...register('fechaLimite')}
+            className={inputClass(false)}
+          />
+        </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Fecha límite</label>
-        <input
-          type="date"
-          {...register('fechaLimite')}
-          className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      <div className="flex gap-3 justify-end">
+      <div className="flex justify-end gap-2 border-t border-line-soft px-5 py-3.5">
         {onCancel && (
-          <button type="button" onClick={onCancel} className="px-4 py-2 rounded-md text-slate-600 hover:bg-slate-100">
+          <Button type="button" variant="secondary" onClick={onCancel}>
             Cancelar
-          </button>
+          </Button>
         )}
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium"
-        >
-          {loading ? 'Guardando...' : initialData ? 'Guardar cambios' : 'Crear proyecto'}
-        </button>
+        <Button type="submit" disabled={loading} loading={loading}>
+          {loading ? 'Guardando' : isEditing ? 'Guardar cambios' : 'Crear proyecto'}
+        </Button>
       </div>
     </form>
   );

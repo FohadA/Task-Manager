@@ -1,6 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as projectsApi from '../api/projects';
 import ProjectForm from '../components/ProjectForm';
+import { ProjectTable } from '../components/ProjectTable';
+import { ProjectToolbar } from '../components/ProjectToolbar';
+import { Plus } from 'lucide-react';
+import { Button } from '../ui/Button';
+import { EmptyState } from '../ui/EmptyState';
+import { ErrorAlert } from '../ui/ErrorAlert';
+import { LoadingState } from '../ui/LoadingState';
+import { Page } from '../ui/Page';
+import { PageHeader } from '../ui/PageHeader';
+import { Panel } from '../ui/Panel';
+import { iconProps } from '../ui/iconProps';
 
 export const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -57,7 +68,12 @@ export const Projects = () => {
     setFormLoading(true);
     try {
       if (editingProject) {
-        await projectsApi.updateProject(editingProject._id, data);
+        const newData = {
+          descripcion: data.descripcion,
+          fechaLimite: data.fechaLimite,
+          nombre: data.nombre
+        }
+        await projectsApi.updateProject(editingProject._id, newData);
       } else {
         await projectsApi.createProject(data);
       }
@@ -71,77 +87,64 @@ export const Projects = () => {
     }
   };
 
-  return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">Proyectos</h1>
-        <button onClick={handleCreate} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium">
-          + Nuevo proyecto
-        </button>
-      </div>
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingProject(null);
+  };
 
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <input
-          type="text"
-          placeholder="Buscar por nombre..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="desc">Más recientes primero</option>
-          <option value="asc">Más antiguos primero</option>
-        </select>
-      </div>
+  return (
+    <Page>
+      <PageHeader
+        title="Proyectos"
+        summary={
+          loading
+            ? 'Cargando'
+            : `${projects.length} ${projects.length === 1 ? 'proyecto' : 'proyectos'}`
+        }
+      >
+        <Button onClick={handleCreate}>
+          <Plus size={16} {...iconProps} />
+          Nuevo proyecto
+        </Button>
+      </PageHeader>
+
+      <ProjectToolbar
+        search={search}
+        onSearchChange={setSearch}
+        sort={sort}
+        onSortChange={setSort}
+      />
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2 mb-4">{error}</p>
+        <div className="mb-4">
+          <ErrorAlert>{error}</ErrorAlert>
+        </div>
       )}
 
       {showForm && (
-        <div className="mb-6">
+        <div className="mb-4">
           <ProjectForm
             initialData={editingProject}
             onSubmit={handleSubmit}
-            onCancel={() => { setShowForm(false); setEditingProject(null); }}
+            onCancel={closeForm}
             loading={formLoading}
           />
         </div>
       )}
 
-      {loading ? (
-        <p className="text-slate-500">Cargando...</p>
-      ) : projects.length === 0 ? (
-        <p className="text-slate-500">No hay proyectos todavía.</p>
-      ) : (
-        <div className="grid gap-4">
-          {projects.map((project) => (
-            <div key={project._id} className="bg-white p-4 rounded-lg shadow flex items-start justify-between">
-              <div>
-                <h3 className="font-semibold text-slate-800">{project.nombre}</h3>
-                {project.descripcion && <p className="text-sm text-slate-600 mt-1">{project.descripcion}</p>}
-                {project.fechaLimite && (
-                  <p className="text-xs text-slate-400 mt-2">
-                    Fecha límite: {new Date(project.fechaLimite).toLocaleDateString()}
-                  </p>
-                )}
-              </div>
-              <div className="flex gap-2 shrink-0">
-                <button onClick={() => handleEdit(project)} className="text-sm text-blue-600 hover:underline">
-                  Editar
-                </button>
-                <button onClick={() => handleDelete(project._id)} className="text-sm text-red-600 hover:underline">
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+      <Panel>
+        {loading ? (
+          <LoadingState />
+        ) : projects.length === 0 ? (
+          <EmptyState>
+            {search
+              ? 'Ningún proyecto coincide con la búsqueda.'
+              : 'Todavía no hay proyectos. Crea el primero para empezar a registrar tareas.'}
+          </EmptyState>
+        ) : (
+          <ProjectTable projects={projects} onEdit={handleEdit} onDelete={handleDelete} />
+        )}
+      </Panel>
+    </Page>
   );
 };
