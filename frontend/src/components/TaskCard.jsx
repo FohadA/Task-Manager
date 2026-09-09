@@ -1,4 +1,4 @@
-import { Trash } from 'lucide-react';
+import { SquarePen, Trash } from 'lucide-react';
 import { formatDate } from '../lib/formatDate';
 import { isOverdue } from '../lib/isOverdue';
 import { Priority } from '../ui/Priority';
@@ -10,6 +10,7 @@ export const TaskCard = ({
   style,
   dimmed = false,
   floating = false,
+  onOpen,
   onEdit,
   onDelete,
   ...props
@@ -21,7 +22,7 @@ export const TaskCard = ({
     <article
       ref={ref}
       style={style}
-      onClick={onEdit}
+      onClick={onOpen}
       className={`group relative rounded-field border bg-surface px-3 py-2.5 text-left transition-[box-shadow,border-color] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
         floating
           ? 'cursor-grabbing border-brand shadow-pop'
@@ -30,7 +31,7 @@ export const TaskCard = ({
       {...props}
     >
       <p
-        className={`pr-5 text-[13.5px] leading-snug font-medium ${
+        className={`pr-14 text-[13.5px] leading-snug font-medium wrap-anywhere ${
           done ? 'text-ink-400 line-through' : 'text-ink'
         }`}
       >
@@ -56,22 +57,34 @@ export const TaskCard = ({
       </div>
 
       {!floating && (
-        <button
-          type="button"
-          aria-label={`Eliminar la tarea ${task.titulo}`}
-          /* Fuera de la tabulación: si no, cada tarjeta gastaría dos paradas. */
-          tabIndex={-1}
-          onPointerDown={(e) => e.stopPropagation()}
-          onKeyDown={(e) => e.stopPropagation()}
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          className="absolute top-1.5 right-1.5 rounded-sm p-1 text-ink-300 opacity-0 transition-colors group-hover:opacity-100 group-focus-visible:opacity-100 hover:bg-danger-soft hover:text-danger"
-        >
-          <Trash size={16} {...iconProps} />
-        </button>
+        <div className="absolute top-1.5 right-1.5 flex items-center gap-0.5">
+          <CardAction label={`Editar la tarea ${task.titulo}`} onClick={onEdit}>
+            <SquarePen size={16} {...iconProps} />
+          </CardAction>
+          <CardAction label={`Eliminar la tarea ${task.titulo}`} onClick={onDelete} danger>
+            <Trash size={16} {...iconProps} />
+          </CardAction>
+        </div>
       )}
     </article>
   );
 };
+
+const CardAction = ({ label, onClick, danger = false, children }) => (
+  <button
+    type="button"
+    aria-label={label}
+    tabIndex={-1}
+    onPointerDown={(e) => e.stopPropagation()}
+    onKeyDown={(e) => e.stopPropagation()}
+    onClick={(e) => {
+      e.stopPropagation();
+      onClick();
+    }}
+    className={`rounded-sm p-1 text-ink-300 opacity-0 transition-colors group-hover:opacity-100 group-focus-visible:opacity-100 ${
+      danger ? 'hover:bg-danger-soft hover:text-danger' : 'hover:bg-canvas hover:text-ink'
+    }`}
+  >
+    {children}
+  </button>
+);

@@ -68,6 +68,16 @@
     font-size: 14px;
   }
 
+  /* Tailwind v4 dejó de poner `cursor: pointer` en los botones. Se restaura
+     aquí, en la capa base, y no con una utilidad: así cualquier `cursor-*`
+     de las utilidades sigue ganando (la capa utilities pisa a base sea cual
+     sea la especificidad), y las tarjetas del tablero conservan su
+     `cursor-grab`. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
   /* Cifras alineadas en tablas, contadores y fechas */
   table, .tabular {
     font-variant-numeric: tabular-nums;

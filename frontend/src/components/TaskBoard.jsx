@@ -14,13 +14,16 @@ import { BOARD_COLUMNS, isColumnId } from './boardColumns';
 import { BoardColumn } from './BoardColumn';
 import { TaskCard } from './TaskCard';
 
-export const TaskBoard = ({ tasks, setTasks, onStatusChange, onEdit, onDelete }) => {
+export const TaskBoard = ({ tasks, setTasks, onStatusChange, onOpen, onEdit, onDelete }) => {
   const [activeTask, setActiveTask] = useState(null);
   const originStatus = useRef(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+      keyboardCodes: { start: ['Space'], cancel: ['Escape'], end: ['Space', 'Enter'] },
+    })
   );
 
   const tasksByColumn = useMemo(
@@ -114,6 +117,7 @@ export const TaskBoard = ({ tasks, setTasks, onStatusChange, onEdit, onDelete })
             column={column}
             tasks={tasksByColumn[column.status]}
             dragging={Boolean(activeTask)}
+            onOpen={onOpen}
             onEdit={onEdit}
             onDelete={onDelete}
           />

@@ -2,8 +2,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { SortableTaskCard } from './SortableTaskCard';
 
-export const BoardColumn = ({ column, tasks, dragging, onEdit, onDelete }) => {
-  /* El id de la zona es el estado: así una columna vacía también acepta soltar. */
+export const BoardColumn = ({ column, tasks, dragging, onOpen, onEdit, onDelete }) => {
   const { setNodeRef, isOver } = useDroppable({ id: column.status });
   const ids = tasks.map((t) => t._id);
 
@@ -30,6 +29,7 @@ export const BoardColumn = ({ column, tasks, dragging, onEdit, onDelete }) => {
             <SortableTaskCard
               key={task._id}
               task={task}
+              onOpen={() => onOpen(task)}
               onEdit={() => onEdit(task)}
               onDelete={() => onDelete(task._id)}
             />

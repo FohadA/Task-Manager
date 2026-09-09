@@ -6,6 +6,7 @@ import TaskForm from '../components/TaskForm';
 import { TaskBoard } from '../components/TaskBoard';
 import { TaskTable } from '../components/TaskTable';
 import { TaskToolbar } from '../components/TaskToolbar';
+import { TaskDetailDialog } from '../components/TaskDetailDialog';
 import { Button } from '../ui/Button';
 import { EmptyState } from '../ui/EmptyState';
 import { ErrorAlert } from '../ui/ErrorAlert';
@@ -33,6 +34,7 @@ export const Tasks = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
+  const [taskToView, setTaskToView] = useState(null);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -77,6 +79,7 @@ export const Tasks = () => {
   };
 
   const handleEdit = (task) => {
+    setTaskToView(null);
     setEditingTask({
       ...task,
       fechaVencimiento: task.fechaVencimiento ? task.fechaVencimiento.substring(0, 10) : '',
@@ -86,6 +89,7 @@ export const Tasks = () => {
   };
 
   const requestDelete = (id) => {
+    setTaskToView(null);
     setTaskToDelete(tasks.find((t) => t._id === id) || null);
   };
 
@@ -241,6 +245,7 @@ export const Tasks = () => {
             tasks={tasks}
             setTasks={setTasks}
             onStatusChange={handleStatusChange}
+            onOpen={setTaskToView}
             onEdit={handleEdit}
             onDelete={requestDelete}
           />
@@ -254,6 +259,7 @@ export const Tasks = () => {
         <Panel>
           <TaskTable
             tasks={tasks}
+            onOpen={setTaskToView}
             onComplete={handleComplete}
             onEdit={handleEdit}
             onDelete={requestDelete}
@@ -267,6 +273,15 @@ export const Tasks = () => {
             />
           )}
         </Panel>
+      )}
+
+      {taskToView && (
+        <TaskDetailDialog
+          task={taskToView}
+          onEdit={() => handleEdit(taskToView)}
+          onDelete={() => requestDelete(taskToView._id)}
+          onClose={() => setTaskToView(null)}
+        />
       )}
 
       {taskToDelete && (

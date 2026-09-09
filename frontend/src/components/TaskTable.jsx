@@ -1,6 +1,6 @@
 import { TaskTableRow } from './TaskTableRow';
 
-export const TaskTable = ({ tasks, onComplete, onEdit, onDelete }) => (
+export const TaskTable = ({ tasks, onOpen, onComplete, onEdit, onDelete }) => (
   <div className="overflow-x-auto">
     <table className="w-full min-w-215 border-collapse text-left">
       <thead>
@@ -21,6 +21,7 @@ export const TaskTable = ({ tasks, onComplete, onEdit, onDelete }) => (
           <TaskTableRow
             key={task._id}
             task={task}
+            onOpen={() => onOpen(task)}
             onComplete={() => onComplete(task)}
             onEdit={() => onEdit(task)}
             onDelete={() => onDelete(task._id)}

@@ -3,25 +3,27 @@ import { Priority } from '../ui/Priority';
 import { RowAction } from '../ui/RowAction';
 import { StatusBadge } from '../ui/StatusBadge';
 
-export const TaskTableRow = ({ task, onComplete, onEdit, onDelete }) => {
+export const TaskTableRow = ({ task, onOpen, onComplete, onEdit, onDelete }) => {
   const done = task.estado === 'completada';
 
   return (
     <tr className="border-b border-line-soft last:border-b-0 hover:bg-canvas">
       <td className="px-5 py-3 align-top">
         <div className="max-w-110">
-          <p
+          <button
+            type="button"
+            onClick={onOpen}
             title={task.titulo}
-            className={`line-clamp-1 text-[14px] font-medium wrap-break-word ${
+            className={`line-clamp-1 w-full rounded-sm text-left text-[14px] font-medium wrap-anywhere underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
               done ? 'text-ink-400 line-through' : 'text-ink'
             }`}
           >
             {task.titulo}
-          </p>
+          </button>
           {task.descripcion && (
             <p
               title={task.descripcion}
-              className="mt-0.5 max-w-[46ch] text-[13px] leading-relaxed text-ink-600 wrap-break-word line-clamp-1"
+              className="mt-0.5 line-clamp-1 max-w-[46ch] text-[13px] leading-relaxed text-ink-600 wrap-anywhere"
             >
               {task.descripcion}
             </p>
