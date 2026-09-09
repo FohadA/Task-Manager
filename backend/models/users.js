@@ -10,7 +10,7 @@ const usuarioSchema = new Schema({
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/^\S+@\S+\.\S+$/, 'Invalid email'],
+    match: [/^\S+@\S+\.\S+$/, 'El email no tiene un formato válido'],
   },
   password: { type: String, required: true, select: false },
 }, { timestamps: true });

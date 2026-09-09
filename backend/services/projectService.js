@@ -20,11 +20,11 @@ const updateProject = async (projectId, userId, data) => {
   const proyecto = await Proyecto.findOneAndUpdate(
     { _id: projectId, usuario: userId },
     data,
-    { new: true, runValidators: true }
+    { returnDocument: 'after', runValidators: true }
   );
 
   if (!proyecto) {
-    const error = new Error('Project not found');
+    const error = new Error('Proyecto no encontrado');
     error.statusCode = 404;
     throw error;
   }
@@ -36,7 +36,7 @@ const deleteProject = async (projectId, userId) => {
   const proyecto = await Proyecto.findOneAndDelete({ _id: projectId, usuario: userId });
 
   if (!proyecto) {
-    const error = new Error('Project not found');
+    const error = new Error('Proyecto no encontrado');
     error.statusCode = 404;
     throw error;
   }

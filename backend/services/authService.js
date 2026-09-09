@@ -10,7 +10,7 @@ const generateToken = (id) => {
 const register = async ({ nombre, email, password }) => {
   const exists = await Usuario.findOne({ email });
   if (exists) {
-    const error = new Error('Email is already registered');
+    const error = new Error('El email ya está registrado');
     error.statusCode = 400;
     throw error;
   }
@@ -28,7 +28,7 @@ const login = async ({ email, password }) => {
   const validCredentials = usuario && (await usuario.compararPassword(password));
 
   if (!validCredentials) {
-    const error = new Error('Invalid credentials');
+    const error = new Error('Credenciales inválidas');
     error.statusCode = 401;
     throw error;
   }

@@ -12,18 +12,18 @@ const protect = async (req, res, next) => {
 
       if (!req.user) {
         res.status(401);
-        return next(new Error('Not authorized, user does not exist'));
+        return next(new Error('No autorizado, el usuario no existe'));
       }
 
       return next();
     } catch (error) {
       res.status(401);
-      return next(new Error('Not authorized, invalid or expired token'));
+      return next(new Error('No autorizado, token inválido o expirado'));
     }
   }
 
   res.status(401);
-  return next(new Error('Not authorized, no token provided'));
+  return next(new Error('No autorizado, no se proporcionó un token'));
 };
 
 module.exports = { protect };

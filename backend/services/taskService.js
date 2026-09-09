@@ -5,7 +5,7 @@ const createTask = async (userId, data) => {
   const proyecto = await Proyecto.findOne({ _id: data.proyecto, usuario: userId });
 
   if (!proyecto) {
-    const error = new Error('Project not found');
+    const error = new Error('Proyecto no encontrado');
     error.statusCode = 404;
     throw error;
   }
@@ -42,11 +42,11 @@ const updateTask = async (taskId, userId, data) => {
   const tarea = await Tarea.findOneAndUpdate(
     { _id: taskId, usuario: userId },
     changes,
-    { new: true, runValidators: true }
+    { returnDocument: 'after', runValidators: true }
   );
 
   if (!tarea) {
-    const error = new Error('Task not found');
+    const error = new Error('Tarea no encontrada');
     error.statusCode = 404;
     throw error;
   }
@@ -58,7 +58,7 @@ const deleteTask = async (taskId, userId) => {
   const tarea = await Tarea.findOneAndDelete({ _id: taskId, usuario: userId });
 
   if (!tarea) {
-    const error = new Error('Task not found');
+    const error = new Error('Tarea no encontrada');
     error.statusCode = 404;
     throw error;
   }
