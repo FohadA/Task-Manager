@@ -1,7 +1,7 @@
 import { Brand } from './Brand';
 
-/* Marco de Login y Register: la misma barra de aplicación que se ve dentro,
-   para que entrar no parezca un sitio distinto. */
+
+
 export const AuthLayout = ({ title, description, footer, children }) => {
 
   return (

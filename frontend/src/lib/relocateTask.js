@@ -1,8 +1,6 @@
 import { isColumnId } from '../components/boardColumns';
 
-/* Mueve una tarea dentro del array plano y le asigna el estado destino.
-   `overId` null (o el id de una columna) significa «al final de esa columna».
-   El campo que se escribe es `estado`, que es el que entiende la API. */
+
 export const relocateTask = (tasks, activeId, overId, targetStatus) => {
   const from = tasks.findIndex((t) => t._id === activeId);
   if (from === -1) return tasks;

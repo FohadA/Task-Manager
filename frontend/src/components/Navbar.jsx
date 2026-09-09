@@ -2,9 +2,6 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Brand } from '../ui/Brand';
 
-/* La navegación queda fuera del orden de tabulación a propósito: en Tareas
-   el foco debe llegar directo a las tarjetas del tablero. Sigue siendo
-   accesible con el ratón y sale en el árbol de accesibilidad. */
 const SECTIONS = [
   { to: '/projects', label: 'Proyectos' },
   { to: '/tasks', label: 'Tareas' },
@@ -31,10 +28,6 @@ export const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-surface">
-      {/* En móvil las secciones bajan a su propia fila: los tres elementos en
-          línea suman más que el ancho de un teléfono y desplazaban la página
-          en horizontal. Desde sm vuelven a una sola barra, y el `order` deja
-          la navegación en medio. */}
       <div className="flex flex-wrap items-center gap-x-4 px-4 sm:flex-nowrap sm:gap-x-7 sm:px-5">
         <div className="flex h-12 min-w-0 items-center sm:h-13">
           <Brand />

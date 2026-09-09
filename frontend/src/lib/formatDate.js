@@ -1,5 +1,5 @@
-/* Fecha corta en formato español. Devuelve una raya cuando no hay valor,
-   para que la columna siga leyéndose en las tablas. */
+
+
 export const formatDate = (value) =>
   value
     ? new Date(value).toLocaleDateString('es-ES', {

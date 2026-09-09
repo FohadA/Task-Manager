@@ -68,9 +68,6 @@ export const TaskDetailDialog = ({ task, onEdit, onDelete, onClose }) => {
         )}
       </div>
 
-      {/* En móvil los dos botones no caben junto al id: se reparten la fila
-          y el id baja debajo. `flex-col-reverse` los deja arriba, que es el
-          orden útil, sin sacarlos de su sitio en el DOM. */}
       <div className="flex flex-col-reverse gap-3 border-t border-line-soft px-4 py-3.5 sm:flex-row sm:px-5 sm:items-center sm:justify-between">
         <span
           className="truncate font-mono text-[11px] text-ink-300"

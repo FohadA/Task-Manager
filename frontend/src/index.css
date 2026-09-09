@@ -68,17 +68,11 @@
     font-size: 14px;
   }
 
-  /* Tailwind v4 dejó de poner `cursor: pointer` en los botones. Se restaura
-     aquí, en la capa base, y no con una utilidad: así cualquier `cursor-*`
-     de las utilidades sigue ganando (la capa utilities pisa a base sea cual
-     sea la especificidad), y las tarjetas del tablero conservan su
-     `cursor-grab`. */
   button:not(:disabled),
   [role='button']:not([aria-disabled='true']) {
     cursor: pointer;
   }
 
-  /* Cifras alineadas en tablas, contadores y fechas */
   table, .tabular {
     font-variant-numeric: tabular-nums;
   }
@@ -88,7 +82,6 @@
     color: var(--color-ink);
   }
 
-  /* Autofill de Chrome: sin el amarillo, respetando fuente y radio */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus {
@@ -100,16 +93,7 @@
     font-size: 14px;
   }
 
-
-  /* Diálogo modal nativo (<dialog> + showModal). El navegador ya aporta el
-     atrapado de foco, Escape, el apilado en la capa superior y el fondo
-     inerte; aquí sólo se pinta el ::backdrop y la entrada.
-     La animación usa @starting-style: los navegadores que no lo soportan
-     simplemente muestran el diálogo sin transición. */
   dialog.modal {
-    /* El navegador centra un <dialog> modal con `margin: auto`, pero el
-       preflight de Tailwind pone `margin: 0` en `*` y lo anula: sin esto el
-       diálogo queda pegado a la esquina superior izquierda. */
     position: fixed;
     inset: 0;
     margin: auto;

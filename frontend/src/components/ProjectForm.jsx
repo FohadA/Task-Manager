@@ -5,7 +5,6 @@ import { Button } from '../ui/Button';
 import { FieldError } from '../ui/FieldError';
 import { FieldLabel } from '../ui/FieldLabel';
 
-/* Las claves son los campos que espera la API, por eso van en español. */
 const emptyValues = { nombre: '', descripcion: '', fechaLimite: '' };
 
 const ProjectForm = ({ initialData, onSubmit, onCancel, loading }) => {

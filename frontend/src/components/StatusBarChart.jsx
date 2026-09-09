@@ -18,9 +18,6 @@ export const StatusBarChart = ({ data }) => (
   <ResponsiveContainer width="100%" height={230}>
     <BarChart data={data} margin={{ top: 22, right: 8, left: -18, bottom: 0 }}>
       <CartesianGrid vertical={false} stroke={GRID} />
-      {/* interval={0} obliga a pintar las tres etiquetas: en móvil Recharts
-          descarta las que cree que van a chocar y desaparecía «En progreso»,
-          que es justo lo que da sentido al color de la barra. */}
       <XAxis
         dataKey="label"
         interval={0}
