@@ -3,7 +3,7 @@ import { Button } from './Button';
 import { iconProps } from './iconProps';
 
 export const Pagination = ({ page, totalPages, total, onChange }) => (
-  <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-3">
+  <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 sm:px-5">
     <p className="text-[12.5px] text-ink-400 tabular">
       Página {page} de {totalPages} · {total} en total
     </p>

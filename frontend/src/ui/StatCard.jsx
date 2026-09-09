@@ -1,9 +1,9 @@
 
 
 export const StatCard = ({ label, value, meter }) => (
-  <div className="rounded-card border border-line bg-surface px-5 py-4">
+  <div className="rounded-card border border-line bg-surface px-4 py-3.5 sm:px-5 sm:py-4">
     <p className="text-[12.5px] text-ink-400">{label}</p>
-    <p className="mt-1 text-[26px] font-semibold leading-none tracking-tight text-ink tabular">
+    <p className="mt-1 text-[22px] font-semibold leading-none tracking-tight text-ink tabular sm:text-[26px]">
       {value}
     </p>
     {typeof meter === 'number' && (

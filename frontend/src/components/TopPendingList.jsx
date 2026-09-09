@@ -7,7 +7,7 @@ export const TopPendingList = ({ projects }) => {
   return (
     <ol className="divide-y divide-line-soft">
       {projects.map((project, index) => (
-        <li key={project.proyectoId} className="flex items-center gap-4 px-5 py-3">
+        <li key={project.proyectoId} className="flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-5">
           <span className="w-4 shrink-0 font-mono text-[12px] text-ink-400">{index + 1}</span>
           <span className="min-w-0 flex-1 truncate text-[14px] text-ink">
             {project.proyectoNombre}
@@ -18,7 +18,7 @@ export const TopPendingList = ({ projects }) => {
               style={{ width: `${(project.pendingCount / max) * 100}%` }}
             />
           </span>
-          <span className="w-16 shrink-0 text-right font-mono text-[13px] font-medium text-ink tabular">
+          <span className="w-10 shrink-0 text-right font-mono text-[13px] font-medium text-ink tabular sm:w-16">
             {project.pendingCount}
           </span>
         </li>

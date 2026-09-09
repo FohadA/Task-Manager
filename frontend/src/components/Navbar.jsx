@@ -13,7 +13,7 @@ const SECTIONS = [
 
 const navLinkClass = ({ isActive }) =>
   [
-    'relative flex h-[52px] items-center px-1 text-[13.5px] font-medium transition-colors',
+    'relative flex h-10 items-center px-1 text-[13.5px] font-medium transition-colors sm:h-13',
     'focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand',
     'after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:content-[""]',
     isActive ? 'text-ink after:bg-brand' : 'text-ink-600 hover:text-ink after:bg-transparent',
@@ -31,18 +31,16 @@ export const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-surface">
-      <div className="flex h-13 items-center gap-7 px-5">
-        <Brand />
+      {/* En móvil las secciones bajan a su propia fila: los tres elementos en
+          línea suman más que el ancho de un teléfono y desplazaban la página
+          en horizontal. Desde sm vuelven a una sola barra, y el `order` deja
+          la navegación en medio. */}
+      <div className="flex flex-wrap items-center gap-x-4 px-4 sm:flex-nowrap sm:gap-x-7 sm:px-5">
+        <div className="flex h-12 min-w-0 items-center sm:h-13">
+          <Brand />
+        </div>
 
-        <nav className="flex items-center gap-6" aria-label="Secciones">
-          {SECTIONS.map((section) => (
-            <NavLink key={section.to} to={section.to} className={navLinkClass} tabIndex={-1}>
-              {section.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        <div className="ml-auto flex items-center gap-2.5">
+        <div className="order-2 ml-auto flex h-12 items-center gap-2.5 sm:order-3 sm:h-13">
           <span
             className="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-canvas text-[11px] font-semibold text-ink-600 ring-1 ring-line"
             aria-hidden="true"
@@ -58,6 +56,17 @@ export const Navbar = () => {
             Salir
           </button>
         </div>
+
+        <nav
+          className="order-3 flex w-full items-center gap-5 border-t border-line-soft sm:order-2 sm:w-auto sm:gap-6 sm:border-t-0"
+          aria-label="Secciones"
+        >
+          {SECTIONS.map((section) => (
+            <NavLink key={section.to} to={section.to} className={navLinkClass} tabIndex={-1}>
+              {section.label}
+            </NavLink>
+          ))}
+        </nav>
       </div>
     </header>
   );

@@ -55,7 +55,7 @@ export const TaskToolbar = ({
         aria-label="Filtrar por proyecto"
         tabIndex={-1}
         style={selectArrow}
-        className={`${selectClass(false)} w-auto min-w-47.5`}
+        className={`${selectClass(false)} w-full sm:w-auto sm:min-w-47.5`}
       >
         <option value="">Todos los proyectos</option>
         {projects.map((project) => (
@@ -73,7 +73,7 @@ export const TaskToolbar = ({
           aria-label="Filtrar por estado"
           tabIndex={-1}
           style={selectArrow}
-          className={`${selectClass(false)} w-auto min-w-47.5`}
+          className={`${selectClass(false)} w-full sm:w-auto sm:min-w-47.5`}
         >
           {STATUS_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -89,7 +89,7 @@ export const TaskToolbar = ({
         aria-label="Filtrar por prioridad"
         tabIndex={-1}
         style={selectArrow}
-        className={`${selectClass(false)} w-auto min-w-47.5`}
+        className={`${selectClass(false)} w-full sm:w-auto sm:min-w-47.5`}
       >
         {PRIORITY_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>

@@ -249,7 +249,7 @@ export const Tasks = () => {
             onEdit={handleEdit}
             onDelete={requestDelete}
           />
-          <p className="mt-3 text-[12.5px] text-ink-400">
+          <p className="mt-3 text-[12.5px] text-ink-400 hidden md:block">
             Arrastra una tarjeta a otra columna para cambiar su estado. Con el teclado: tabula hasta
             la tarjeta, Espacio para agarrarla, flechas para moverla y Espacio otra vez para
             soltarla.

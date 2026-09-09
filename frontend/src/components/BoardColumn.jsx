@@ -9,7 +9,7 @@ export const BoardColumn = ({ column, tasks, dragging, onOpen, onEdit, onDelete 
   return (
     <section
       aria-label={`${column.label}, ${tasks.length} ${tasks.length === 1 ? 'tarea' : 'tareas'}`}
-      className={`flex min-h-50 flex-col rounded-card border bg-canvas transition-colors duration-150 ${
+      className={`flex min-h-32 flex-col rounded-card border bg-canvas sm:min-h-50 transition-colors duration-150 ${
         isOver
           ? 'border-brand bg-brand-50'
           : dragging

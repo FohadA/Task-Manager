@@ -6,7 +6,7 @@ import logo from '../assets/logo.jpg';
    margen del archivo. Al no tener transparencia sólo funciona sobre fondo
    blanco, que es el de la barra (bg-surface). */
 export const Brand = () => (
-  <div className="flex items-center gap-2">
+  <div className="flex min-w-0 items-center gap-2">
     <img
       src={logo}
       alt=""
@@ -15,6 +15,8 @@ export const Brand = () => (
       height={28}
       className="h-7 w-7 shrink-0 object-contain"
     />
-    <span className="text-[14px] font-semibold text-ink">Gestión de proyectos</span>
+    {/* `truncate` es la válvula: en pantallas de 320px el texto encoge en
+          vez de empujar la barra y desplazar la página en horizontal. */}
+    <span className="truncate text-[14px] font-semibold text-ink">Gestión de proyectos</span>
   </div>
 );

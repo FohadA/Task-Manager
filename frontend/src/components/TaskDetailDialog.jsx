@@ -16,7 +16,7 @@ export const TaskDetailDialog = ({ task, onEdit, onDelete, onClose }) => {
       onClose={onClose}
       className="w-[min(94vw,520px)]"
     >
-      <div className="flex items-start gap-3 border-b border-line-soft px-5 pt-5 pb-4">
+      <div className="flex items-start gap-3 border-b border-line-soft px-4 pt-4 pb-4 sm:px-5 sm:pt-5">
         <div className="min-w-0 flex-1">
           <h2
             id="task-detail-title"
@@ -57,7 +57,7 @@ export const TaskDetailDialog = ({ task, onEdit, onDelete, onClose }) => {
         )}
       </dl>
 
-      <div className="border-t border-line-soft px-5 py-4">
+      <div className="border-t border-line-soft px-4 py-4 sm:px-5">
         <h3 className="text-[13px] font-medium text-ink-600">Descripción</h3>
         {task.descripcion ? (
           <p className="mt-2 max-h-60 overflow-y-auto text-[14px] leading-relaxed whitespace-pre-wrap text-ink-800 wrap-anywhere">
@@ -68,16 +68,27 @@ export const TaskDetailDialog = ({ task, onEdit, onDelete, onClose }) => {
         )}
       </div>
 
-      <div className="flex items-center justify-between gap-3 border-t border-line-soft px-5 py-3.5">
-        <span className="truncate font-mono text-[11px] text-ink-300" title={`ID ${task._id}`}>
+      {/* En móvil los dos botones no caben junto al id: se reparten la fila
+          y el id baja debajo. `flex-col-reverse` los deja arriba, que es el
+          orden útil, sin sacarlos de su sitio en el DOM. */}
+      <div className="flex flex-col-reverse gap-3 border-t border-line-soft px-4 py-3.5 sm:flex-row sm:px-5 sm:items-center sm:justify-between">
+        <span
+          className="truncate font-mono text-[11px] text-ink-300"
+          title={`ID ${task._id}`}
+        >
           {task._id}
         </span>
         <div className="flex shrink-0 items-center gap-2">
-          <Button type="button" variant="secondary" onClick={onDelete}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={onDelete}
+            className="flex-1 sm:flex-none"
+          >
             <Trash size={15} {...iconProps} />
             Eliminar
           </Button>
-          <Button type="button" onClick={onEdit} autoFocus>
+          <Button type="button" onClick={onEdit} autoFocus className="flex-1 sm:flex-none">
             <SquarePen size={15} {...iconProps} />
             Editar tarea
           </Button>
@@ -88,8 +99,8 @@ export const TaskDetailDialog = ({ task, onEdit, onDelete, onClose }) => {
 };
 
 const Row = ({ label, children }) => (
-  <div className="flex items-baseline gap-4 px-5 py-2.5">
-    <dt className="w-28 shrink-0 text-[13px] text-ink-400">{label}</dt>
+  <div className="flex items-baseline gap-4 px-4 py-2.5 sm:px-5">
+    <dt className="w-24 shrink-0 text-[13px] text-ink-400 sm:w-28">{label}</dt>
     <dd className="min-w-0 flex-1 text-[13.5px] text-ink-800 wrap-anywhere">
       {children}
     </dd>
