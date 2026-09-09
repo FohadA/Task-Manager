@@ -9,19 +9,24 @@ export const TaskTableRow = ({ task, onComplete, onEdit, onDelete }) => {
   return (
     <tr className="border-b border-line-soft last:border-b-0 hover:bg-canvas">
       <td className="px-5 py-3 align-top">
-        <p
-          className={`text-[14px] font-medium ${done ? 'text-ink-400 line-through' : 'text-ink'}`}
-        >
-          {task.titulo}
-        </p>
-        {task.descripcion && (
-          <p className="mt-0.5 max-w-[46ch] text-[13px] leading-relaxed text-ink-600">
-            {task.descripcion}
+        <div className="max-w-110">
+          <p
+            title={task.titulo}
+            className={`line-clamp-1 text-[14px] font-medium wrap-break-word ${
+              done ? 'text-ink-400 line-through' : 'text-ink'
+            }`}
+          >
+            {task.titulo}
           </p>
-        )}
-      </td>
-      <td className="px-4 py-3 align-top text-[13px] text-ink-600">
-        {task.proyecto?.nombre || '—'}
+          {task.descripcion && (
+            <p
+              title={task.descripcion}
+              className="mt-0.5 max-w-[46ch] text-[13px] leading-relaxed text-ink-600 wrap-break-word line-clamp-1"
+            >
+              {task.descripcion}
+            </p>
+          )}
+        </div>
       </td>
       <td className="px-4 py-3 align-top">
         <StatusBadge status={task.estado} />

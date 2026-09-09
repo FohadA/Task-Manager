@@ -6,7 +6,6 @@ export const TaskTable = ({ tasks, onComplete, onEdit, onDelete }) => (
       <thead>
         <tr className="border-b border-line">
           <th className="px-5 py-2.5 text-[12.5px] font-medium text-ink-400">Tarea</th>
-          <th className="w-42.5 px-4 py-2.5 text-[12.5px] font-medium text-ink-400">Proyecto</th>
           <th className="w-35 px-4 py-2.5 text-[12.5px] font-medium text-ink-400">Estado</th>
           <th className="w-27.5 px-4 py-2.5 text-[12.5px] font-medium text-ink-400">
             Prioridad

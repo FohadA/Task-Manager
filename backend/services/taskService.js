@@ -1,6 +1,15 @@
 const Tarea = require('../models/tasks');
 const Proyecto = require('../models/project');
 
+const synchronizeDate = (cambios) => {
+  if (cambios.estado === 'completada') {
+    cambios.fechaCompletada = new Date();
+  } else if (cambios.estado) {
+    cambios.fechaCompletada = null;
+  }
+  return cambios;
+};
+
 const createTask = async (userId, data) => {
   const proyecto = await Proyecto.findOne({ _id: data.proyecto, usuario: userId });
 
@@ -10,7 +19,8 @@ const createTask = async (userId, data) => {
     throw error;
   }
 
-  return Tarea.create({ ...data, usuario: userId });
+  const payload = synchronizeDate({ ...data, usuario: userId });
+  return Tarea.create(payload);
 };
 
 const getTasks = async (userId, filters = {}) => {
@@ -35,9 +45,7 @@ const getTasks = async (userId, filters = {}) => {
 };
 
 const updateTask = async (taskId, userId, data) => {
-  const changes = { ...data };
-  if (data.estado === 'completada') changes.fechaCompletada = new Date();
-  if (data.estado && data.estado !== 'completada') changes.fechaCompletada = null;
+  const changes = synchronizeDate({ ...data });
 
   const tarea = await Tarea.findOneAndUpdate(
     { _id: taskId, usuario: userId },

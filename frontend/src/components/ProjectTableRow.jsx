@@ -4,9 +4,9 @@ import { RowAction } from '../ui/RowAction';
 export const ProjectTableRow = ({ project, onEdit, onDelete }) => (
   <tr className="border-b border-line-soft last:border-b-0 hover:bg-canvas">
     <td className="px-5 py-3 align-top">
-      <p className="text-[14px] font-medium text-ink">{project.nombre}</p>
+      <p className="text-[14px] font-medium text-ink wrap-break-word line-clamp-1">{project.nombre}</p>
       {project.descripcion && (
-        <p className="mt-0.5 max-w-[52ch] text-[13px] leading-relaxed text-ink-600">
+        <p className="mt-0.5 max-w-[52ch] text-[13px] leading-relaxed text-ink-600 wrap-break-word line-clamp-1">
           {project.descripcion}
         </p>
       )}
