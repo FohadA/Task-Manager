@@ -42,6 +42,7 @@ export const TaskToolbar = ({
   return (
     <div className="mb-4 flex flex-wrap items-center gap-2">
       <SegmentedControl
+        tabIndex={-1}
         label="Vista de las tareas"
         value={view}
         onChange={onViewChange}
@@ -52,6 +53,7 @@ export const TaskToolbar = ({
         value={projectFilter}
         onChange={(e) => onProjectFilterChange(e.target.value)}
         aria-label="Filtrar por proyecto"
+        tabIndex={-1}
         style={selectArrow}
         className={`${selectClass(false)} w-auto min-w-47.5`}
       >
@@ -69,6 +71,7 @@ export const TaskToolbar = ({
           value={statusFilter}
           onChange={(e) => onStatusFilterChange(e.target.value)}
           aria-label="Filtrar por estado"
+          tabIndex={-1}
           style={selectArrow}
           className={`${selectClass(false)} w-auto min-w-47.5`}
         >
@@ -84,6 +87,7 @@ export const TaskToolbar = ({
         value={priorityFilter}
         onChange={(e) => onPriorityFilterChange(e.target.value)}
         aria-label="Filtrar por prioridad"
+        tabIndex={-1}
         style={selectArrow}
         className={`${selectClass(false)} w-auto min-w-47.5`}
       >
@@ -95,7 +99,7 @@ export const TaskToolbar = ({
       </select>
 
       {hasFilters && (
-        <Button variant="ghost" onClick={onClearFilters}>
+        <Button variant="ghost" onClick={onClearFilters} tabIndex={-1}>
           Quitar filtros
         </Button>
       )}

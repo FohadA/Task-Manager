@@ -33,7 +33,7 @@ const updateProject = async (req, res, next) => {
 const deleteProject = async (req, res, next) => {
   try {
     await projectService.deleteProject(req.params.id, req.user._id);
-    res.status(200).json({ message: 'Project deleted' });
+    res.status(200).json({ message: 'Proyecto Eliminado correctamente' });
   } catch (error) {
     res.status(error.statusCode || 500);
     next(error);

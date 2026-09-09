@@ -11,6 +11,7 @@ import { LoadingState } from '../ui/LoadingState';
 import { Page } from '../ui/Page';
 import { PageHeader } from '../ui/PageHeader';
 import { Panel } from '../ui/Panel';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { iconProps } from '../ui/iconProps';
 
 export const Projects = () => {
@@ -22,6 +23,8 @@ export const Projects = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchProjects = useCallback(async () => {
     setLoading(true);
@@ -54,13 +57,23 @@ export const Projects = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('¿Eliminar este proyecto? También se eliminarán sus tareas.')) return;
+  const requestDelete = (id) => {
+    setProjectToDelete(projects.find((p) => p._id === id) || null);
+  };
+
+  const confirmDelete = async () => {
+    if (!projectToDelete) return;
+    setDeleting(true);
+    setError(null);
     try {
-      await projectsApi.deleteProject(id);
+      await projectsApi.deleteProject(projectToDelete._id);
+      setProjectToDelete(null);
       fetchProjects();
     } catch (err) {
       setError(err.response?.data?.message || 'No se pudo eliminar el proyecto');
+      setProjectToDelete(null);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -142,9 +155,25 @@ export const Projects = () => {
               : 'Todavía no hay proyectos. Crea el primero para empezar a registrar tareas.'}
           </EmptyState>
         ) : (
-          <ProjectTable projects={projects} onEdit={handleEdit} onDelete={handleDelete} />
+          <ProjectTable projects={projects} onEdit={handleEdit} onDelete={requestDelete} />
         )}
       </Panel>
+
+      {projectToDelete && (
+        <ConfirmDialog
+          title="Eliminar proyecto"
+          description={
+            <>
+              Se eliminará <strong className="font-semibold text-ink">{projectToDelete.nombre}</strong>{' '}
+              y todas sus tareas. Esta acción no se puede deshacer.
+            </>
+          }
+          confirmLabel="Eliminar proyecto"
+          loading={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setProjectToDelete(null)}
+        />
+      )}
     </Page>
   );
 };

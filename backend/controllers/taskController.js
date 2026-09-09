@@ -37,7 +37,7 @@ const updateTask = async (req, res, next) => {
 const deleteTask = async (req, res, next) => {
   try {
     await taskService.deleteTask(req.params.id, req.user._id);
-    res.status(200).json({ message: 'Task deleted' });
+    res.status(200).json({ message: 'Tarea eliminada correctamente' });
   } catch (error) {
     res.status(error.statusCode || 500);
     next(error);

@@ -8,6 +8,8 @@ const VARIANTS = {
   secondary:
     'border border-line bg-surface text-ink-800 hover:border-ink-300 hover:bg-canvas disabled:hover:bg-surface',
   ghost: 'text-ink-600 hover:bg-canvas hover:text-ink',
+  danger:
+    'bg-danger text-white hover:bg-danger-700 active:bg-danger-800 focus-visible:outline-danger disabled:hover:bg-danger',
 };
 
 export const Button = ({

@@ -2,6 +2,9 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Brand } from '../ui/Brand';
 
+/* La navegación queda fuera del orden de tabulación a propósito: en Tareas
+   el foco debe llegar directo a las tarjetas del tablero. Sigue siendo
+   accesible con el ratón y sale en el árbol de accesibilidad. */
 const SECTIONS = [
   { to: '/projects', label: 'Proyectos' },
   { to: '/tasks', label: 'Tareas' },
@@ -33,7 +36,7 @@ export const Navbar = () => {
 
         <nav className="flex items-center gap-6" aria-label="Secciones">
           {SECTIONS.map((section) => (
-            <NavLink key={section.to} to={section.to} className={navLinkClass}>
+            <NavLink key={section.to} to={section.to} className={navLinkClass} tabIndex={-1}>
               {section.label}
             </NavLink>
           ))}
@@ -49,6 +52,7 @@ export const Navbar = () => {
           <span className="hidden text-[13px] text-ink-600 sm:inline">{usuario?.nombre}</span>
           <button
             onClick={logout}
+            tabIndex={-1}
             className="ml-1 rounded-field border border-line px-2.5 py-1 text-[13px] font-medium text-ink-600 transition-colors hover:border-ink-300 hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             Salir

@@ -59,13 +59,15 @@ export const TaskCard = ({
         <button
           type="button"
           aria-label={`Eliminar la tarea ${task.titulo}`}
+          /* Fuera de la tabulación: si no, cada tarjeta gastaría dos paradas. */
+          tabIndex={-1}
           onPointerDown={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
           }}
-          className="absolute top-1.5 right-1.5 rounded-sm p-1 text-ink-300 opacity-0 transition-colors group-hover:opacity-100 hover:bg-danger-soft hover:text-danger focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand"
+          className="absolute top-1.5 right-1.5 rounded-sm p-1 text-ink-300 opacity-0 transition-colors group-hover:opacity-100 group-focus-visible:opacity-100 hover:bg-danger-soft hover:text-danger"
         >
           <Trash size={16} {...iconProps} />
         </button>

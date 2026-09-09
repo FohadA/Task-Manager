@@ -14,9 +14,9 @@ import { Page } from '../ui/Page';
 import { PageHeader } from '../ui/PageHeader';
 import { Pagination } from '../ui/Pagination';
 import { Panel } from '../ui/Panel';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { iconProps } from '../ui/iconProps';
 
-/* El tablero no pagina: se trae todas las tareas del filtro de una vez. */
 const PAGE_SIZE = { board: 200, list: 10 };
 
 export const Tasks = () => {
@@ -33,6 +33,8 @@ export const Tasks = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const isBoard = view === 'board';
 
@@ -46,7 +48,6 @@ export const Tasks = () => {
     try {
       const data = await tasksApi.getTasks({
         proyecto: projectFilter || undefined,
-        /* En el tablero el estado es la columna, no un filtro. */
         estado: isBoard ? undefined : statusFilter || undefined,
         prioridad: priorityFilter || undefined,
         page: isBoard ? 1 : page,
@@ -84,13 +85,23 @@ export const Tasks = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('¿Eliminar esta tarea?')) return;
+  const requestDelete = (id) => {
+    setTaskToDelete(tasks.find((t) => t._id === id) || null);
+  };
+
+  const confirmDelete = async () => {
+    if (!taskToDelete) return;
+    setDeleting(true);
+    setError(null);
     try {
-      await tasksApi.deleteTask(id);
+      await tasksApi.deleteTask(taskToDelete._id);
+      setTaskToDelete(null);
       fetchTasks();
     } catch (err) {
       setError(err.response?.data?.message || 'No se pudo eliminar la tarea');
+      setTaskToDelete(null);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -103,8 +114,6 @@ export const Tasks = () => {
     }
   };
 
-  /* El tablero ya pintó el cambio antes de llamar a la API: si el servidor lo
-     rechaza, devolvemos la tarjeta a su columna de origen y avisamos. */
   const handleStatusChange = useCallback(async (id, nextStatus, previousStatus) => {
     setError(null);
     try {
@@ -119,7 +128,7 @@ export const Tasks = () => {
     setFormLoading(true);
     try {
       if (editingTask) {
-        const { proyecto, ...changes } = data; // el backend no acepta 'proyecto' en update
+        const { proyecto, ...changes } = data;
         void proyecto;
         console.log(changes)
         const newData = {
@@ -180,7 +189,7 @@ export const Tasks = () => {
               }`
         }
       >
-        <Button onClick={handleCreate}>
+        <Button onClick={handleCreate} tabIndex={-1}>
           <Plus size={16} {...iconProps} />
           Nueva tarea
         </Button>
@@ -233,7 +242,7 @@ export const Tasks = () => {
             setTasks={setTasks}
             onStatusChange={handleStatusChange}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={requestDelete}
           />
           <p className="mt-3 text-[12.5px] text-ink-400">
             Arrastra una tarjeta a otra columna para cambiar su estado. Con el teclado: tabula hasta
@@ -247,7 +256,7 @@ export const Tasks = () => {
             tasks={tasks}
             onComplete={handleComplete}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={requestDelete}
           />
           {pagination.totalPages > 1 && (
             <Pagination
@@ -258,6 +267,22 @@ export const Tasks = () => {
             />
           )}
         </Panel>
+      )}
+
+      {taskToDelete && (
+        <ConfirmDialog
+          title="Eliminar tarea"
+          description={
+            <>
+              Se eliminará <strong className="font-semibold text-ink">{taskToDelete.titulo}</strong>.
+              Esta acción no se puede deshacer.
+            </>
+          }
+          confirmLabel="Eliminar tarea"
+          loading={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setTaskToDelete(null)}
+        />
       )}
     </Page>
   );
